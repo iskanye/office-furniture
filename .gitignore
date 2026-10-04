@@ -1,0 +1,32 @@
+# macOS and editors
+.DS_Store
+.idea/
+.vscode/
+*.iml
+
+# Word temporary files
+~$*
+*.tmp
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Java
+*.class
+*.jar
+.gradle/
+build/
+target/
+out/
+
+# Local credentials and environment
+.env
+.env.*
+!.env.example
