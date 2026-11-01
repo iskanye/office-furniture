@@ -46,7 +46,8 @@ def calculate_total(lines, products):
     """Calculate agreed prices, preserving kopecks: O(n)."""
     total = Decimal("0.00")
     for line in lines:
-        total += Decimal(products[line["product_id"]]["price"]) * line["quantity"]
+        price = Decimal(products[line["product_id"]]["price"])
+        total += price * line["quantity"]
     return total.quantize(Decimal("0.01"))
 
 

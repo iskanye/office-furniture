@@ -79,7 +79,12 @@ def drawio(name,boxes,arrows,width,height):
         ET.SubElement(cell,"mxGeometry",x=str(x),y=str(y),width=str(w),height=str(h),attrib={"as":"geometry"})
     for i,(a,b,label) in enumerate(arrows):
         cell=ET.SubElement(graph,"mxCell",id=f"edge{i}",value=label,style="endArrow=block;html=1;rounded=0;",edge="1",parent="1",source=a,target=b)
-        ET.SubElement(cell,"mxGeometry",relative="1",attrib={"as":"geometry"})
+        geom=ET.SubElement(cell,"mxGeometry",relative="1",attrib={"as":"geometry"})
+        if name.startswith("algo") and boxes[b][3] < boxes[a][3] - 100:
+            side=95 if name=="algo_1" else width-95
+            points=ET.SubElement(geom,"Array",attrib={"as":"points"})
+            for y in (boxes[a][3]+boxes[a][5]//2,boxes[b][3]+boxes[b][5]//2):
+                ET.SubElement(points,"mxPoint",x=str(side),y=str(y))
     ET.ElementTree(root).write(OUT/(name+".drawio"),encoding="utf-8",xml_declaration=True)
 
 
@@ -94,7 +99,7 @@ def bpmn(boxes,arrows):
     ET.SubElement(collaboration,f"{{{B}}}participant",id="Participant_1",name="Поставщик офисной мебели",processRef="Process_1")
     process=ET.SubElement(root,f"{{{B}}}process",id="Process_1",name="Обработка заявки и резервирование мебели",isExecutable="false")
     lane_set=ET.SubElement(process,f"{{{B}}}laneSet",id="LaneSet_1")
-    groups={"manager":["start","register","validate","notify"],"system":["availability","gateway","price","reserve"],"customer":["confirm"],"warehouse":["receive","endok","endno"]}
+    groups={"manager":["start","register","validate","notify","endbad","endshort"],"system":["availability","gateway","price","reserve"],"customer":["confirm","endcancel"],"warehouse":["receive","endok"]}
     for lane_id,ids in groups.items():
         lane=ET.SubElement(lane_set,f"{{{B}}}lane",id=f"Lane_{lane_id}",name={"manager":"Менеджер","system":"Система","customer":"Покупатель","warehouse":"Склад"}[lane_id])
         for item in ids: ET.SubElement(lane,f"{{{B}}}flowNodeRef").text=item
@@ -128,13 +133,14 @@ def main():
       "start":("Заявка\nполучена","start",130,80,105,80),"register":("Зарегистрировать\nзаявку","task",300,70,205,95),
       "validate":("Проверить\nкорректность заявки","task",570,70,225,95),"availability":("Проверить\nдоступность товаров","task",850,270,230,95),
       "gateway":("Товары\nдоступны?","decision",1130,255,180,125),"price":("Рассчитать\nстоимость заказа","task",1380,265,220,95),
-      "confirm":("Подтвердить\nусловия заказа","task",1380,475,220,95),"reserve":("Зарезервировать\nвсе позиции","task",1110,365,245,85),
-      "notify":("Сообщить\nо дефиците","task",850,75,220,95),"endok":("Заказ\nс резервом","end",1410,685,130,90),
-      "endno":("Отказ","end",600,680,115,80),"receive":("Принять заказ\nк комплектации","task",1120,680,230,90),"data_request":("Заявка","data",360,190,140,60),
-      "data_product":("Каталог и\nостатки","data",850,400,180,65),"data_reservation":("Резерв","data",1100,810,150,60)}
-    flows=[("start","register",""),("register","validate",""),("validate","availability","корректна"),("validate","endno","нет"),
-      ("availability","gateway",""),("gateway","notify","нет"),("notify","endno",""),("gateway","price","да"),
-      ("price","confirm",""),("confirm","reserve","да"),("confirm","endno","нет"),("reserve","receive",""),("receive","endok",""),
+      "confirm":("Подтвердить\nусловия заказа","task",1380,475,220,95),"reserve":("Зарезервировать\nвсе позиции","task",850,375,245,85),
+      "notify":("Сообщить\nо дефиците","task",1120,75,220,95),"endok":("Заказ\nс резервом","end",1410,685,130,90),
+      "endbad":("Ошибка\nзаявки","end",850,80,115,80),"endshort":("Отказ:\nдефицит","end",1450,80,115,80),"endcancel":("Отказ\nпокупателя","end",1500,570,130,60),
+      "receive":("Принять заказ\nк комплектации","task",1120,680,230,90),"data_request":("Заявка","data",360,190,140,60),
+      "data_product":("Каталог и\nостатки","data",580,320,180,65),"data_reservation":("Резерв","data",800,780,150,60)}
+    flows=[("start","register",""),("register","validate",""),("validate","availability","корректна"),("validate","endbad","нет"),
+      ("availability","gateway",""),("gateway","notify","нет"),("notify","endshort",""),("gateway","price","да"),
+      ("price","confirm",""),("confirm","reserve","да"),("confirm","endcancel","нет"),("reserve","receive",""),("receive","endok",""),
       ("data_request","register",""),("data_product","availability",""),("reserve","data_reservation","")]
     picture("bpmn",1720,900,process,flows,[("Менеджер",40,205),("Система",250,215),("Покупатель",470,160),("Склад",635,245)])
     bpmn(process,flows)
