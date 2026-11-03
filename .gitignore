@@ -30,3 +30,6 @@ out/
 .env
 .env.*
 !.env.example
+
+# Generated submission snapshot (regenerated after each commit)
+/git_log.txt

@@ -142,8 +142,8 @@ def main():
       ("availability","gateway",""),("gateway","notify","нет"),("notify","endshort",""),("gateway","price","да"),
       ("price","confirm",""),("confirm","reserve","да"),("confirm","endcancel","нет"),("reserve","receive",""),("receive","endok",""),
       ("data_request","register",""),("data_product","availability",""),("reserve","data_reservation","")]
-    picture("bpmn",1720,900,process,flows,[("Менеджер",40,205),("Система",250,215),("Покупатель",470,160),("Склад",635,245)])
-    bpmn(process,flows)
+    from generate_bpmn import generate
+    generate()
     er={
       "customer":("ПОКУПАТЕЛЬ\nid PK\nname","process",40,80,250,135),"request":("ЗАЯВКА\nid PK\ncustomer_id FK\nconfirmed; agreed_total\ncancelled\ncancellation_reason","process",390,70,270,190),
       "line":("ПОЗИЦИЯ ЗАЯВКИ\nrequest_id PK FK\nproduct_id PK FK\nquantity","process",780,80,300,160),
