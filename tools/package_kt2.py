@@ -12,7 +12,7 @@ SUBMISSION = ROOT / "ИКБО-10-24_БикташевИИ_КТ2"
 ARCHIVE = ROOT / "ИКБО-10-24_БикташевИИ_КТ2.zip"
 
 FILES = {
-    "report.docx": ROOT / "Отчет_ИКБО-10-24_БикташевИИ_КТ2.docx",
+    "report.docx": REPOSITORY / "Отчет_ИКБО-10-24_БикташевИИ.docx",
     "models/bpmn.bpmn": REPOSITORY / "models/bpmn.bpmn",
     "models/bpmn.png": REPOSITORY / "models/bpmn.png",
     "models/er_logical.drawio": REPOSITORY / "models/er_logical.drawio",
