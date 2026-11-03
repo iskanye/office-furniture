@@ -55,7 +55,8 @@ def picture(name, width, height, boxes, arrows, lanes=()):
         p=[(x2,y2),(x2-13*math.cos(ang-.5),y2-13*math.sin(ang-.5)),(x2-13*math.cos(ang+.5),y2-13*math.sin(ang+.5))]
         d.polygon(p,fill="#425b70")
         if label:
-            d.text(((x1+x2)/2+5,(y1+y2)/2-24),label,font=font(18),fill="#9b4d24")
+            lx, ly = branch_label_position(name, boxes, a, b, (x1, y1), (x2, y2))
+            d.text((lx, ly), label, font=font(18), fill="#9b4d24")
     im.save(OUT/(name+".png"))
 
 
@@ -64,6 +65,17 @@ def anchor(a,b):
     dx=(bx+bw/2)-(x+w/2); dy=(by+bh/2)-(y+h/2)
     if abs(dx)>abs(dy): return (x+w if dx>0 else x,y+h/2)
     return (x+w/2,y+h if dy>0 else y)
+
+
+def branch_label_position(name, boxes, source, target, start, end):
+    """Place each answer beside the segment leaving its decision diamond."""
+    x1, y1 = start
+    x2, y2 = end
+    if name.startswith("algo") and boxes[target][3] < boxes[source][3] - 100:
+        return (x1 - 34, y1 - 29) if name == "algo_1" else (x1 + 14, y1 - 29)
+    if name.startswith("algo") and boxes[source][1] == "decision":
+        return (x1 + 15, y1 - 29) if x2 > x1 + 30 else (x1 + 10, y1 + 6)
+    return ((x1 + x2) / 2 + 5, (y1 + y2) / 2 - 24)
 
 
 def drawio(name,boxes,arrows,width,height):
@@ -78,13 +90,29 @@ def drawio(name,boxes,arrows,width,height):
         cell=ET.SubElement(graph,"mxCell",id=key,value=label.replace("\n","<br>"),style=styles[kind]+"fontSize=16;",vertex="1",parent="1")
         ET.SubElement(cell,"mxGeometry",x=str(x),y=str(y),width=str(w),height=str(h),attrib={"as":"geometry"})
     for i,(a,b,label) in enumerate(arrows):
-        cell=ET.SubElement(graph,"mxCell",id=f"edge{i}",value=label,style="endArrow=block;html=1;rounded=0;",edge="1",parent="1",source=a,target=b)
+        cell=ET.SubElement(graph,"mxCell",id=f"edge{i}",value="" if name.startswith("algo") else label,style="endArrow=block;html=1;rounded=0;",edge="1",parent="1",source=a,target=b)
         geom=ET.SubElement(cell,"mxGeometry",relative="1",attrib={"as":"geometry"})
         if name.startswith("algo") and boxes[b][3] < boxes[a][3] - 100:
             side=95 if name=="algo_1" else width-95
             points=ET.SubElement(geom,"Array",attrib={"as":"points"})
             for y in (boxes[a][3]+boxes[a][5]//2,boxes[b][3]+boxes[b][5]//2):
                 ET.SubElement(points,"mxPoint",x=str(side),y=str(y))
+        if label and name.startswith("algo"):
+            start = anchor(boxes[a], boxes[b])
+            end = anchor(boxes[b], boxes[a])
+            if boxes[b][3] < boxes[a][3] - 100:
+                side = 95 if name == "algo_1" else width - 95
+                start = (boxes[a][2] if side < width / 2 else boxes[a][2] + boxes[a][4],
+                         boxes[a][3] + boxes[a][5] / 2)
+                end = (boxes[b][2] if side < width / 2 else boxes[b][2] + boxes[b][4],
+                       boxes[b][3] + boxes[b][5] / 2)
+            lx, ly = branch_label_position(name, boxes, a, b, start, end)
+            label_cell = ET.SubElement(graph,"mxCell",id=f"edge{i}_label",value=label,
+                                       style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;"
+                                             "fillColor=none;strokeColor=none;fontSize=16;fontColor=#9b4d24;",
+                                       vertex="1",parent="1")
+            ET.SubElement(label_cell,"mxGeometry",x=str(round(lx)),y=str(round(ly)),
+                          width="45",height="24",attrib={"as":"geometry"})
     ET.ElementTree(root).write(OUT/(name+".drawio"),encoding="utf-8",xml_declaration=True)
 
 
