@@ -145,7 +145,7 @@ def main():
     picture("bpmn",1720,900,process,flows,[("Менеджер",40,205),("Система",250,215),("Покупатель",470,160),("Склад",635,245)])
     bpmn(process,flows)
     er={
-      "customer":("ПОКУПАТЕЛЬ\nid PK\nname","process",40,80,250,135),"request":("ЗАЯВКА\nid PK\ncustomer_id FK\nconfirmed; agreed_total","process",390,80,270,160),
+      "customer":("ПОКУПАТЕЛЬ\nid PK\nname","process",40,80,250,135),"request":("ЗАЯВКА\nid PK\ncustomer_id FK\nconfirmed; agreed_total\ncancelled\ncancellation_reason","process",390,70,270,190),
       "line":("ПОЗИЦИЯ ЗАЯВКИ\nrequest_id PK FK\nproduct_id PK FK\nquantity","process",780,80,300,160),
       "product":("ТОВАР\nid PK\nname; price","process",1220,80,250,135),"stock":("ОСТАТОК\nproduct_id PK FK\nquantity","process",1220,350,250,135),
       "reserve":("РЕЗЕРВ\nid PK\nrequest_id FK\nproduct_id FK\nquantity; active","process",780,350,300,180)}

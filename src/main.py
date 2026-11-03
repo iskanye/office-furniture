@@ -52,6 +52,8 @@ def calculate_total(lines, products):
 
 
 def reserve_request(request, lines, products, stocks, reservations):
+    if request.get("cancelled"):
+        return {"status": "rejected", "reason": "Заказ отменён"}
     if any(item["request_id"] == request["id"] and item["active"] for item in reservations):
         return {"status": "rejected", "reason": "Заявка уже зарезервирована"}
     shortages = check_availability(lines, stocks, reservations)
@@ -65,7 +67,32 @@ def reserve_request(request, lines, products, stocks, reservations):
     return {"status": "reserved", "request_id": request["id"], "total": str(total)}
 
 
+def cancel_request(data):
+    """Release this request's active reservations without changing physical stock."""
+    request = data["request"]
+    cancellation = data.get("cancellation", {})
+    if cancellation.get("request_id") != request.get("id"):
+        return {"status": "rejected", "reason": "Неверный номер заявки"}
+    reason = cancellation.get("reason")
+    if not isinstance(reason, str) or not reason.strip():
+        return {"status": "rejected", "reason": "Укажите причину отмены"}
+    if request.get("cancelled"):
+        return {"status": "rejected", "reason": "Заказ уже отменён"}
+    active = [item for item in data["reservations"]
+              if item["request_id"] == request["id"] and item["active"]]
+    if not active:
+        return {"status": "rejected", "reason": "У заказа нет активного резерва"}
+    for item in active:
+        item["active"] = False
+    request["cancelled"] = True
+    request["cancellation_reason"] = reason.strip()
+    return {"status": "cancelled", "request_id": request["id"],
+            "reason": request["cancellation_reason"], "released_reservations": len(active)}
+
+
 def process_request(data):
+    if data.get("operation") == "cancel":
+        return cancel_request(data)
     customers = {item["id"]: item for item in data["customers"]}
     products = {item["id"]: item for item in data["products"]}
     stocks = {item["product_id"]: item["quantity"] for item in data["stocks"]}
