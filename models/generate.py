@@ -179,14 +179,8 @@ def main():
       "reserve":("РЕЗЕРВ\nid PK\nrequest_id FK\nproduct_id FK\nquantity; active","process",780,350,300,180)}
     er_edges=[("customer","request","1:N"),("request","line","1:N"),("product","line","1:N"),("product","stock","1:1"),("request","reserve","1:N"),("product","reserve","1:N")]
     picture("er_logical",1530,600,er,er_edges);drawio("er_logical",er,er_edges,1530,600)
-    a1={"s":("Начало","start",500,25,150,65),"inp":("Ввод строк, остатков\nи резервов","data",440,125,270,70),
-        "outer":("Следующая\nстрока заявки","loop",470,230,210,75),"inner":("Следующий\nрезерв","loop",470,350,210,75),
-        "match":("Тот же товар\nи активен?","decision",455,460,240,105),"add":("Сложить\nзарезервированное","process",765,480,250,70),
-        "more":("Есть ещё\nрезервы?","decision",450,600,250,105),"short":("Запрос >\nдоступного?","decision",455,740,240,105),
-        "out":("Добавить\nдефицит","process",765,755,230,70),"next":("Есть ещё\nстроки?","decision",450,885,250,105),
-        "result":("Вывод списка\nдефицита","data",440,1035,270,70),"e":("Конец","end",500,1140,150,65)}
-    e1=[("s","inp",""),("inp","outer",""),("outer","inner",""),("inner","match",""),("match","add","да"),("match","more","нет"),("add","more",""),("more","inner","да"),("more","short","нет"),("short","out","да"),("short","next","нет"),("out","next",""),("next","outer","да"),("next","result","нет"),("result","e","")]
-    picture("algo_1",1100,1230,a1,e1);drawio("algo_1",a1,e1,1100,1230)
+    from generate_availability import generate as generate_availability
+    generate_availability()
     a2={"s":("Начало","start",420,25,150,65),"inp":("Ввод строк\nи цен","data",360,125,270,75),"zero":("Итог = 0","process",390,245,210,65),
         "loop":("Следующая\nстрока","loop",380,355,230,80),"add":("Итог += цена ×\nколичество","process",335,500,320,75),
         "more":("Есть ещё\nстроки?","decision",370,650,250,105),"out":("Вывод итога\nдо копеек","data",360,825,270,75),"e":("Конец","end",420,965,150,65)}
