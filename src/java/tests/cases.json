@@ -1,0 +1,1864 @@
+[
+  {
+    "name": "Успешное резервирование",
+    "input": {
+      "customers": [
+        {
+          "id": "C1",
+          "name": "ООО Пример"
+        }
+      ],
+      "products": [
+        {
+          "id": "T1",
+          "name": "Стол",
+          "price": "12500.00"
+        },
+        {
+          "id": "K1",
+          "name": "Кресло",
+          "price": "8500.00"
+        }
+      ],
+      "stocks": [
+        {
+          "product_id": "T1",
+          "quantity": 10
+        },
+        {
+          "product_id": "K1",
+          "quantity": 6
+        }
+      ],
+      "reservations": [
+        {
+          "id": "R0:T1",
+          "request_id": "R0",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        }
+      ],
+      "request": {
+        "id": "R1",
+        "customer_id": "C1",
+        "confirmed": true,
+        "agreed_total": "33500.00",
+        "lines": [
+          {
+            "product_id": "T1",
+            "quantity": 2
+          },
+          {
+            "product_id": "K1",
+            "quantity": 1
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "reserved",
+      "request_id": "R1",
+      "total": "33500.00"
+    }
+  },
+  {
+    "name": "Отмена двух резервов",
+    "input": {
+      "operation": "cancel",
+      "request": {
+        "id": "R1",
+        "customer_id": "C1",
+        "confirmed": true
+      },
+      "stocks": [
+        {
+          "product_id": "T1",
+          "quantity": 10
+        },
+        {
+          "product_id": "K1",
+          "quantity": 6
+        }
+      ],
+      "reservations": [
+        {
+          "id": "R1:T1",
+          "request_id": "R1",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        },
+        {
+          "id": "R1:K1",
+          "request_id": "R1",
+          "product_id": "K1",
+          "quantity": 1,
+          "active": true
+        },
+        {
+          "id": "R0:T1",
+          "request_id": "R0",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        }
+      ],
+      "cancellation": {
+        "request_id": "R1",
+        "reason": "Покупатель отказался от заказа"
+      }
+    },
+    "expected": {
+      "status": "cancelled",
+      "request_id": "R1",
+      "reason": "Покупатель отказался от заказа",
+      "released_reservations": 2
+    }
+  },
+  {
+    "name": "Неизвестный покупатель",
+    "input": {
+      "customers": [
+        {
+          "id": "C1",
+          "name": "ООО Пример"
+        }
+      ],
+      "products": [
+        {
+          "id": "T1",
+          "name": "Стол",
+          "price": "12500.00"
+        },
+        {
+          "id": "K1",
+          "name": "Кресло",
+          "price": "8500.00"
+        }
+      ],
+      "stocks": [
+        {
+          "product_id": "T1",
+          "quantity": 10
+        },
+        {
+          "product_id": "K1",
+          "quantity": 6
+        }
+      ],
+      "reservations": [
+        {
+          "id": "R0:T1",
+          "request_id": "R0",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        }
+      ],
+      "request": {
+        "id": "R1",
+        "customer_id": "bad",
+        "confirmed": true,
+        "agreed_total": "33500.00",
+        "lines": [
+          {
+            "product_id": "T1",
+            "quantity": 2
+          },
+          {
+            "product_id": "K1",
+            "quantity": 1
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "rejected",
+      "reason": "Неизвестный покупатель"
+    }
+  },
+  {
+    "name": "Не указан покупатель",
+    "input": {
+      "customers": [
+        {
+          "id": "C1",
+          "name": "ООО Пример"
+        }
+      ],
+      "products": [
+        {
+          "id": "T1",
+          "name": "Стол",
+          "price": "12500.00"
+        },
+        {
+          "id": "K1",
+          "name": "Кресло",
+          "price": "8500.00"
+        }
+      ],
+      "stocks": [
+        {
+          "product_id": "T1",
+          "quantity": 10
+        },
+        {
+          "product_id": "K1",
+          "quantity": 6
+        }
+      ],
+      "reservations": [
+        {
+          "id": "R0:T1",
+          "request_id": "R0",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        }
+      ],
+      "request": {
+        "id": "R1",
+        "confirmed": true,
+        "agreed_total": "33500.00",
+        "lines": [
+          {
+            "product_id": "T1",
+            "quantity": 2
+          },
+          {
+            "product_id": "K1",
+            "quantity": 1
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "rejected",
+      "reason": "Неизвестный покупатель"
+    }
+  },
+  {
+    "name": "Не указан товар",
+    "input": {
+      "customers": [
+        {
+          "id": "C1",
+          "name": "ООО Пример"
+        }
+      ],
+      "products": [
+        {
+          "id": "T1",
+          "name": "Стол",
+          "price": "12500.00"
+        },
+        {
+          "id": "K1",
+          "name": "Кресло",
+          "price": "8500.00"
+        }
+      ],
+      "stocks": [
+        {
+          "product_id": "T1",
+          "quantity": 10
+        },
+        {
+          "product_id": "K1",
+          "quantity": 6
+        }
+      ],
+      "reservations": [
+        {
+          "id": "R0:T1",
+          "request_id": "R0",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        }
+      ],
+      "request": {
+        "id": "R1",
+        "customer_id": "C1",
+        "confirmed": true,
+        "agreed_total": "33500.00",
+        "lines": [
+          {
+            "quantity": 2
+          },
+          {
+            "product_id": "K1",
+            "quantity": 1
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "rejected",
+      "reason": "Неизвестный артикул: None"
+    }
+  },
+  {
+    "name": "Пустая заявка",
+    "input": {
+      "customers": [
+        {
+          "id": "C1",
+          "name": "ООО Пример"
+        }
+      ],
+      "products": [
+        {
+          "id": "T1",
+          "name": "Стол",
+          "price": "12500.00"
+        },
+        {
+          "id": "K1",
+          "name": "Кресло",
+          "price": "8500.00"
+        }
+      ],
+      "stocks": [
+        {
+          "product_id": "T1",
+          "quantity": 10
+        },
+        {
+          "product_id": "K1",
+          "quantity": 6
+        }
+      ],
+      "reservations": [
+        {
+          "id": "R0:T1",
+          "request_id": "R0",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        }
+      ],
+      "request": {
+        "id": "R1",
+        "customer_id": "C1",
+        "confirmed": true,
+        "agreed_total": "33500.00",
+        "lines": []
+      }
+    },
+    "expected": {
+      "status": "rejected",
+      "reason": "В заявке нет позиций"
+    }
+  },
+  {
+    "name": "Неизвестный товар",
+    "input": {
+      "customers": [
+        {
+          "id": "C1",
+          "name": "ООО Пример"
+        }
+      ],
+      "products": [
+        {
+          "id": "T1",
+          "name": "Стол",
+          "price": "12500.00"
+        },
+        {
+          "id": "K1",
+          "name": "Кресло",
+          "price": "8500.00"
+        }
+      ],
+      "stocks": [
+        {
+          "product_id": "T1",
+          "quantity": 10
+        },
+        {
+          "product_id": "K1",
+          "quantity": 6
+        }
+      ],
+      "reservations": [
+        {
+          "id": "R0:T1",
+          "request_id": "R0",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        }
+      ],
+      "request": {
+        "id": "R1",
+        "customer_id": "C1",
+        "confirmed": true,
+        "agreed_total": "33500.00",
+        "lines": [
+          {
+            "product_id": "bad",
+            "quantity": 2
+          },
+          {
+            "product_id": "K1",
+            "quantity": 1
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "rejected",
+      "reason": "Неизвестный артикул: bad"
+    }
+  },
+  {
+    "name": "Количество 0",
+    "input": {
+      "customers": [
+        {
+          "id": "C1",
+          "name": "ООО Пример"
+        }
+      ],
+      "products": [
+        {
+          "id": "T1",
+          "name": "Стол",
+          "price": "12500.00"
+        },
+        {
+          "id": "K1",
+          "name": "Кресло",
+          "price": "8500.00"
+        }
+      ],
+      "stocks": [
+        {
+          "product_id": "T1",
+          "quantity": 10
+        },
+        {
+          "product_id": "K1",
+          "quantity": 6
+        }
+      ],
+      "reservations": [
+        {
+          "id": "R0:T1",
+          "request_id": "R0",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        }
+      ],
+      "request": {
+        "id": "R1",
+        "customer_id": "C1",
+        "confirmed": true,
+        "agreed_total": "33500.00",
+        "lines": [
+          {
+            "product_id": "T1",
+            "quantity": 0
+          },
+          {
+            "product_id": "K1",
+            "quantity": 1
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "rejected",
+      "reason": "Количество должно быть положительным целым числом"
+    }
+  },
+  {
+    "name": "Количество -1",
+    "input": {
+      "customers": [
+        {
+          "id": "C1",
+          "name": "ООО Пример"
+        }
+      ],
+      "products": [
+        {
+          "id": "T1",
+          "name": "Стол",
+          "price": "12500.00"
+        },
+        {
+          "id": "K1",
+          "name": "Кресло",
+          "price": "8500.00"
+        }
+      ],
+      "stocks": [
+        {
+          "product_id": "T1",
+          "quantity": 10
+        },
+        {
+          "product_id": "K1",
+          "quantity": 6
+        }
+      ],
+      "reservations": [
+        {
+          "id": "R0:T1",
+          "request_id": "R0",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        }
+      ],
+      "request": {
+        "id": "R1",
+        "customer_id": "C1",
+        "confirmed": true,
+        "agreed_total": "33500.00",
+        "lines": [
+          {
+            "product_id": "T1",
+            "quantity": -1
+          },
+          {
+            "product_id": "K1",
+            "quantity": 1
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "rejected",
+      "reason": "Количество должно быть положительным целым числом"
+    }
+  },
+  {
+    "name": "Количество 1.5",
+    "input": {
+      "customers": [
+        {
+          "id": "C1",
+          "name": "ООО Пример"
+        }
+      ],
+      "products": [
+        {
+          "id": "T1",
+          "name": "Стол",
+          "price": "12500.00"
+        },
+        {
+          "id": "K1",
+          "name": "Кресло",
+          "price": "8500.00"
+        }
+      ],
+      "stocks": [
+        {
+          "product_id": "T1",
+          "quantity": 10
+        },
+        {
+          "product_id": "K1",
+          "quantity": 6
+        }
+      ],
+      "reservations": [
+        {
+          "id": "R0:T1",
+          "request_id": "R0",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        }
+      ],
+      "request": {
+        "id": "R1",
+        "customer_id": "C1",
+        "confirmed": true,
+        "agreed_total": "33500.00",
+        "lines": [
+          {
+            "product_id": "T1",
+            "quantity": 1.5
+          },
+          {
+            "product_id": "K1",
+            "quantity": 1
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "rejected",
+      "reason": "Количество должно быть положительным целым числом"
+    }
+  },
+  {
+    "name": "Количество True",
+    "input": {
+      "customers": [
+        {
+          "id": "C1",
+          "name": "ООО Пример"
+        }
+      ],
+      "products": [
+        {
+          "id": "T1",
+          "name": "Стол",
+          "price": "12500.00"
+        },
+        {
+          "id": "K1",
+          "name": "Кресло",
+          "price": "8500.00"
+        }
+      ],
+      "stocks": [
+        {
+          "product_id": "T1",
+          "quantity": 10
+        },
+        {
+          "product_id": "K1",
+          "quantity": 6
+        }
+      ],
+      "reservations": [
+        {
+          "id": "R0:T1",
+          "request_id": "R0",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        }
+      ],
+      "request": {
+        "id": "R1",
+        "customer_id": "C1",
+        "confirmed": true,
+        "agreed_total": "33500.00",
+        "lines": [
+          {
+            "product_id": "T1",
+            "quantity": true
+          },
+          {
+            "product_id": "K1",
+            "quantity": 1
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "rejected",
+      "reason": "Количество должно быть положительным целым числом"
+    }
+  },
+  {
+    "name": "Количество 2",
+    "input": {
+      "customers": [
+        {
+          "id": "C1",
+          "name": "ООО Пример"
+        }
+      ],
+      "products": [
+        {
+          "id": "T1",
+          "name": "Стол",
+          "price": "12500.00"
+        },
+        {
+          "id": "K1",
+          "name": "Кресло",
+          "price": "8500.00"
+        }
+      ],
+      "stocks": [
+        {
+          "product_id": "T1",
+          "quantity": 10
+        },
+        {
+          "product_id": "K1",
+          "quantity": 6
+        }
+      ],
+      "reservations": [
+        {
+          "id": "R0:T1",
+          "request_id": "R0",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        }
+      ],
+      "request": {
+        "id": "R1",
+        "customer_id": "C1",
+        "confirmed": true,
+        "agreed_total": "33500.00",
+        "lines": [
+          {
+            "product_id": "T1",
+            "quantity": "2"
+          },
+          {
+            "product_id": "K1",
+            "quantity": 1
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "rejected",
+      "reason": "Количество должно быть положительным целым числом"
+    }
+  },
+  {
+    "name": "Количество None",
+    "input": {
+      "customers": [
+        {
+          "id": "C1",
+          "name": "ООО Пример"
+        }
+      ],
+      "products": [
+        {
+          "id": "T1",
+          "name": "Стол",
+          "price": "12500.00"
+        },
+        {
+          "id": "K1",
+          "name": "Кресло",
+          "price": "8500.00"
+        }
+      ],
+      "stocks": [
+        {
+          "product_id": "T1",
+          "quantity": 10
+        },
+        {
+          "product_id": "K1",
+          "quantity": 6
+        }
+      ],
+      "reservations": [
+        {
+          "id": "R0:T1",
+          "request_id": "R0",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        }
+      ],
+      "request": {
+        "id": "R1",
+        "customer_id": "C1",
+        "confirmed": true,
+        "agreed_total": "33500.00",
+        "lines": [
+          {
+            "product_id": "T1",
+            "quantity": null
+          },
+          {
+            "product_id": "K1",
+            "quantity": 1
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "rejected",
+      "reason": "Количество должно быть положительным целым числом"
+    }
+  },
+  {
+    "name": "Количество 2.0",
+    "input": {
+      "customers": [
+        {
+          "id": "C1",
+          "name": "ООО Пример"
+        }
+      ],
+      "products": [
+        {
+          "id": "T1",
+          "name": "Стол",
+          "price": "12500.00"
+        },
+        {
+          "id": "K1",
+          "name": "Кресло",
+          "price": "8500.00"
+        }
+      ],
+      "stocks": [
+        {
+          "product_id": "T1",
+          "quantity": 10
+        },
+        {
+          "product_id": "K1",
+          "quantity": 6
+        }
+      ],
+      "reservations": [
+        {
+          "id": "R0:T1",
+          "request_id": "R0",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        }
+      ],
+      "request": {
+        "id": "R1",
+        "customer_id": "C1",
+        "confirmed": true,
+        "agreed_total": "33500.00",
+        "lines": [
+          {
+            "product_id": "T1",
+            "quantity": 2.0
+          },
+          {
+            "product_id": "K1",
+            "quantity": 1
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "rejected",
+      "reason": "Количество должно быть положительным целым числом"
+    }
+  },
+  {
+    "name": "Количество 100000000000000000000",
+    "input": {
+      "customers": [
+        {
+          "id": "C1",
+          "name": "ООО Пример"
+        }
+      ],
+      "products": [
+        {
+          "id": "T1",
+          "name": "Стол",
+          "price": "12500.00"
+        },
+        {
+          "id": "K1",
+          "name": "Кресло",
+          "price": "8500.00"
+        }
+      ],
+      "stocks": [
+        {
+          "product_id": "T1",
+          "quantity": 10
+        },
+        {
+          "product_id": "K1",
+          "quantity": 6
+        }
+      ],
+      "reservations": [
+        {
+          "id": "R0:T1",
+          "request_id": "R0",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        }
+      ],
+      "request": {
+        "id": "R1",
+        "customer_id": "C1",
+        "confirmed": true,
+        "agreed_total": "33500.00",
+        "lines": [
+          {
+            "product_id": "T1",
+            "quantity": 100000000000000000000
+          },
+          {
+            "product_id": "K1",
+            "quantity": 1
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "rejected",
+      "reason": "Недостаточно товара",
+      "shortages": [
+        {
+          "product_id": "T1",
+          "missing": 99999999999999999992
+        }
+      ]
+    }
+  },
+  {
+    "name": "Дефицит",
+    "input": {
+      "customers": [
+        {
+          "id": "C1",
+          "name": "ООО Пример"
+        }
+      ],
+      "products": [
+        {
+          "id": "T1",
+          "name": "Стол",
+          "price": "12500.00"
+        },
+        {
+          "id": "K1",
+          "name": "Кресло",
+          "price": "8500.00"
+        }
+      ],
+      "stocks": [
+        {
+          "product_id": "T1",
+          "quantity": 1
+        },
+        {
+          "product_id": "K1",
+          "quantity": 6
+        }
+      ],
+      "reservations": [
+        {
+          "id": "R0:T1",
+          "request_id": "R0",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        }
+      ],
+      "request": {
+        "id": "R1",
+        "customer_id": "C1",
+        "confirmed": true,
+        "agreed_total": "33500.00",
+        "lines": [
+          {
+            "product_id": "T1",
+            "quantity": 2
+          },
+          {
+            "product_id": "K1",
+            "quantity": 1
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "rejected",
+      "reason": "Недостаточно товара",
+      "shortages": [
+        {
+          "product_id": "T1",
+          "missing": 3
+        }
+      ]
+    }
+  },
+  {
+    "name": "Ожидание согласования",
+    "input": {
+      "customers": [
+        {
+          "id": "C1",
+          "name": "ООО Пример"
+        }
+      ],
+      "products": [
+        {
+          "id": "T1",
+          "name": "Стол",
+          "price": "12500.00"
+        },
+        {
+          "id": "K1",
+          "name": "Кресло",
+          "price": "8500.00"
+        }
+      ],
+      "stocks": [
+        {
+          "product_id": "T1",
+          "quantity": 10
+        },
+        {
+          "product_id": "K1",
+          "quantity": 6
+        }
+      ],
+      "reservations": [
+        {
+          "id": "R0:T1",
+          "request_id": "R0",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        }
+      ],
+      "request": {
+        "id": "R1",
+        "customer_id": "C1",
+        "confirmed": false,
+        "agreed_total": "33500.00",
+        "lines": [
+          {
+            "product_id": "T1",
+            "quantity": 2
+          },
+          {
+            "product_id": "K1",
+            "quantity": 1
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "awaiting_confirmation",
+      "total": "33500.00"
+    }
+  },
+  {
+    "name": "Изменение суммы",
+    "input": {
+      "customers": [
+        {
+          "id": "C1",
+          "name": "ООО Пример"
+        }
+      ],
+      "products": [
+        {
+          "id": "T1",
+          "name": "Стол",
+          "price": "12500.00"
+        },
+        {
+          "id": "K1",
+          "name": "Кресло",
+          "price": "8500.00"
+        }
+      ],
+      "stocks": [
+        {
+          "product_id": "T1",
+          "quantity": 10
+        },
+        {
+          "product_id": "K1",
+          "quantity": 6
+        }
+      ],
+      "reservations": [
+        {
+          "id": "R0:T1",
+          "request_id": "R0",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        }
+      ],
+      "request": {
+        "id": "R1",
+        "customer_id": "C1",
+        "confirmed": true,
+        "agreed_total": "1.00",
+        "lines": [
+          {
+            "product_id": "T1",
+            "quantity": 2
+          },
+          {
+            "product_id": "K1",
+            "quantity": 1
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "rejected",
+      "reason": "Согласованная цена изменилась",
+      "total": "33500.00"
+    }
+  },
+  {
+    "name": "Уже отменён",
+    "input": {
+      "customers": [
+        {
+          "id": "C1",
+          "name": "ООО Пример"
+        }
+      ],
+      "products": [
+        {
+          "id": "T1",
+          "name": "Стол",
+          "price": "12500.00"
+        },
+        {
+          "id": "K1",
+          "name": "Кресло",
+          "price": "8500.00"
+        }
+      ],
+      "stocks": [
+        {
+          "product_id": "T1",
+          "quantity": 10
+        },
+        {
+          "product_id": "K1",
+          "quantity": 6
+        }
+      ],
+      "reservations": [
+        {
+          "id": "R0:T1",
+          "request_id": "R0",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        }
+      ],
+      "request": {
+        "id": "R1",
+        "customer_id": "C1",
+        "confirmed": true,
+        "agreed_total": "33500.00",
+        "lines": [
+          {
+            "product_id": "T1",
+            "quantity": 2
+          },
+          {
+            "product_id": "K1",
+            "quantity": 1
+          }
+        ],
+        "cancelled": true
+      }
+    },
+    "expected": {
+      "status": "rejected",
+      "reason": "Заказ отменён"
+    }
+  },
+  {
+    "name": "Уже зарезервирован",
+    "input": {
+      "customers": [
+        {
+          "id": "C1",
+          "name": "ООО Пример"
+        }
+      ],
+      "products": [
+        {
+          "id": "T1",
+          "name": "Стол",
+          "price": "12500.00"
+        },
+        {
+          "id": "K1",
+          "name": "Кресло",
+          "price": "8500.00"
+        }
+      ],
+      "stocks": [
+        {
+          "product_id": "T1",
+          "quantity": 10
+        },
+        {
+          "product_id": "K1",
+          "quantity": 6
+        }
+      ],
+      "reservations": [
+        {
+          "id": "R0:T1",
+          "request_id": "R1",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        }
+      ],
+      "request": {
+        "id": "R1",
+        "customer_id": "C1",
+        "confirmed": true,
+        "agreed_total": "33500.00",
+        "lines": [
+          {
+            "product_id": "T1",
+            "quantity": 2
+          },
+          {
+            "product_id": "K1",
+            "quantity": 1
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "rejected",
+      "reason": "Заявка уже зарезервирована"
+    }
+  },
+  {
+    "name": "Дубликат строки",
+    "input": {
+      "customers": [
+        {
+          "id": "C1",
+          "name": "ООО Пример"
+        }
+      ],
+      "products": [
+        {
+          "id": "T1",
+          "name": "Стол",
+          "price": "12500.00"
+        },
+        {
+          "id": "K1",
+          "name": "Кресло",
+          "price": "8500.00"
+        }
+      ],
+      "stocks": [
+        {
+          "product_id": "T1",
+          "quantity": 10
+        },
+        {
+          "product_id": "K1",
+          "quantity": 6
+        }
+      ],
+      "reservations": [
+        {
+          "id": "R0:T1",
+          "request_id": "R0",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        }
+      ],
+      "request": {
+        "id": "R1",
+        "customer_id": "C1",
+        "confirmed": true,
+        "agreed_total": "33500.00",
+        "lines": [
+          {
+            "product_id": "T1",
+            "quantity": 2
+          },
+          {
+            "product_id": "K1",
+            "quantity": 1
+          },
+          {
+            "product_id": "T1",
+            "quantity": 2
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "rejected",
+      "reason": "Согласованная цена изменилась",
+      "total": "58500.00"
+    }
+  },
+  {
+    "name": "Неактивный резерв",
+    "input": {
+      "customers": [
+        {
+          "id": "C1",
+          "name": "ООО Пример"
+        }
+      ],
+      "products": [
+        {
+          "id": "T1",
+          "name": "Стол",
+          "price": "12500.00"
+        },
+        {
+          "id": "K1",
+          "name": "Кресло",
+          "price": "8500.00"
+        }
+      ],
+      "stocks": [
+        {
+          "product_id": "T1",
+          "quantity": 10
+        },
+        {
+          "product_id": "K1",
+          "quantity": 6
+        }
+      ],
+      "reservations": [
+        {
+          "id": "R0:T1",
+          "request_id": "R0",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": false
+        }
+      ],
+      "request": {
+        "id": "R1",
+        "customer_id": "C1",
+        "confirmed": true,
+        "agreed_total": "33500.00",
+        "lines": [
+          {
+            "product_id": "T1",
+            "quantity": 2
+          },
+          {
+            "product_id": "K1",
+            "quantity": 1
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "reserved",
+      "request_id": "R1",
+      "total": "33500.00"
+    }
+  },
+  {
+    "name": "Нет резервов",
+    "input": {
+      "customers": [
+        {
+          "id": "C1",
+          "name": "ООО Пример"
+        }
+      ],
+      "products": [
+        {
+          "id": "T1",
+          "name": "Стол",
+          "price": "12500.00"
+        },
+        {
+          "id": "K1",
+          "name": "Кресло",
+          "price": "8500.00"
+        }
+      ],
+      "stocks": [
+        {
+          "product_id": "T1",
+          "quantity": 10
+        },
+        {
+          "product_id": "K1",
+          "quantity": 6
+        }
+      ],
+      "reservations": [],
+      "request": {
+        "id": "R1",
+        "customer_id": "C1",
+        "confirmed": true,
+        "agreed_total": "33500.00",
+        "lines": [
+          {
+            "product_id": "T1",
+            "quantity": 2
+          },
+          {
+            "product_id": "K1",
+            "quantity": 1
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "reserved",
+      "request_id": "R1",
+      "total": "33500.00"
+    }
+  },
+  {
+    "name": "Нет остатка",
+    "input": {
+      "customers": [
+        {
+          "id": "C1",
+          "name": "ООО Пример"
+        }
+      ],
+      "products": [
+        {
+          "id": "T1",
+          "name": "Стол",
+          "price": "12500.00"
+        },
+        {
+          "id": "K1",
+          "name": "Кресло",
+          "price": "8500.00"
+        }
+      ],
+      "stocks": [],
+      "reservations": [
+        {
+          "id": "R0:T1",
+          "request_id": "R0",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        }
+      ],
+      "request": {
+        "id": "R1",
+        "customer_id": "C1",
+        "confirmed": true,
+        "agreed_total": "33500.00",
+        "lines": [
+          {
+            "product_id": "T1",
+            "quantity": 2
+          },
+          {
+            "product_id": "K1",
+            "quantity": 1
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "rejected",
+      "reason": "Недостаточно товара",
+      "shortages": [
+        {
+          "product_id": "T1",
+          "missing": 4
+        },
+        {
+          "product_id": "K1",
+          "missing": 1
+        }
+      ]
+    }
+  },
+  {
+    "name": "Десятичная цена",
+    "input": {
+      "customers": [
+        {
+          "id": "C1",
+          "name": "ООО Пример"
+        }
+      ],
+      "products": [
+        {
+          "id": "T1",
+          "name": "Стол",
+          "price": "12500.005"
+        },
+        {
+          "id": "K1",
+          "name": "Кресло",
+          "price": "8500.00"
+        }
+      ],
+      "stocks": [
+        {
+          "product_id": "T1",
+          "quantity": 10
+        },
+        {
+          "product_id": "K1",
+          "quantity": 6
+        }
+      ],
+      "reservations": [
+        {
+          "id": "R0:T1",
+          "request_id": "R0",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        }
+      ],
+      "request": {
+        "id": "R1",
+        "customer_id": "C1",
+        "confirmed": true,
+        "agreed_total": "33500.01",
+        "lines": [
+          {
+            "product_id": "T1",
+            "quantity": 2
+          },
+          {
+            "product_id": "K1",
+            "quantity": 1
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "reserved",
+      "request_id": "R1",
+      "total": "33500.01"
+    }
+  },
+  {
+    "name": "Неверный номер",
+    "input": {
+      "operation": "cancel",
+      "request": {
+        "id": "R1",
+        "customer_id": "C1",
+        "confirmed": true
+      },
+      "stocks": [
+        {
+          "product_id": "T1",
+          "quantity": 10
+        },
+        {
+          "product_id": "K1",
+          "quantity": 6
+        }
+      ],
+      "reservations": [
+        {
+          "id": "R1:T1",
+          "request_id": "R1",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        },
+        {
+          "id": "R1:K1",
+          "request_id": "R1",
+          "product_id": "K1",
+          "quantity": 1,
+          "active": true
+        },
+        {
+          "id": "R0:T1",
+          "request_id": "R0",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        }
+      ],
+      "cancellation": {
+        "request_id": "bad",
+        "reason": "Покупатель отказался от заказа"
+      }
+    },
+    "expected": {
+      "status": "rejected",
+      "reason": "Неверный номер заявки"
+    }
+  },
+  {
+    "name": "Пустая причина",
+    "input": {
+      "operation": "cancel",
+      "request": {
+        "id": "R1",
+        "customer_id": "C1",
+        "confirmed": true
+      },
+      "stocks": [
+        {
+          "product_id": "T1",
+          "quantity": 10
+        },
+        {
+          "product_id": "K1",
+          "quantity": 6
+        }
+      ],
+      "reservations": [
+        {
+          "id": "R1:T1",
+          "request_id": "R1",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        },
+        {
+          "id": "R1:K1",
+          "request_id": "R1",
+          "product_id": "K1",
+          "quantity": 1,
+          "active": true
+        },
+        {
+          "id": "R0:T1",
+          "request_id": "R0",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        }
+      ],
+      "cancellation": {
+        "request_id": "R1",
+        "reason": "  "
+      }
+    },
+    "expected": {
+      "status": "rejected",
+      "reason": "Укажите причину отмены"
+    }
+  },
+  {
+    "name": "Причина не строка",
+    "input": {
+      "operation": "cancel",
+      "request": {
+        "id": "R1",
+        "customer_id": "C1",
+        "confirmed": true
+      },
+      "stocks": [
+        {
+          "product_id": "T1",
+          "quantity": 10
+        },
+        {
+          "product_id": "K1",
+          "quantity": 6
+        }
+      ],
+      "reservations": [
+        {
+          "id": "R1:T1",
+          "request_id": "R1",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        },
+        {
+          "id": "R1:K1",
+          "request_id": "R1",
+          "product_id": "K1",
+          "quantity": 1,
+          "active": true
+        },
+        {
+          "id": "R0:T1",
+          "request_id": "R0",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        }
+      ],
+      "cancellation": {
+        "request_id": "R1",
+        "reason": 4
+      }
+    },
+    "expected": {
+      "status": "rejected",
+      "reason": "Укажите причину отмены"
+    }
+  },
+  {
+    "name": "Повторная отмена",
+    "input": {
+      "operation": "cancel",
+      "request": {
+        "id": "R1",
+        "customer_id": "C1",
+        "confirmed": true,
+        "cancelled": true
+      },
+      "stocks": [
+        {
+          "product_id": "T1",
+          "quantity": 10
+        },
+        {
+          "product_id": "K1",
+          "quantity": 6
+        }
+      ],
+      "reservations": [
+        {
+          "id": "R1:T1",
+          "request_id": "R1",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        },
+        {
+          "id": "R1:K1",
+          "request_id": "R1",
+          "product_id": "K1",
+          "quantity": 1,
+          "active": true
+        },
+        {
+          "id": "R0:T1",
+          "request_id": "R0",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        }
+      ],
+      "cancellation": {
+        "request_id": "R1",
+        "reason": "Покупатель отказался от заказа"
+      }
+    },
+    "expected": {
+      "status": "rejected",
+      "reason": "Заказ уже отменён"
+    }
+  },
+  {
+    "name": "Нет активных резервов",
+    "input": {
+      "operation": "cancel",
+      "request": {
+        "id": "R1",
+        "customer_id": "C1",
+        "confirmed": true
+      },
+      "stocks": [
+        {
+          "product_id": "T1",
+          "quantity": 10
+        },
+        {
+          "product_id": "K1",
+          "quantity": 6
+        }
+      ],
+      "reservations": [
+        {
+          "id": "R1:T1",
+          "request_id": "R1",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": false
+        },
+        {
+          "id": "R1:K1",
+          "request_id": "R1",
+          "product_id": "K1",
+          "quantity": 1,
+          "active": false
+        },
+        {
+          "id": "R0:T1",
+          "request_id": "R0",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": false
+        }
+      ],
+      "cancellation": {
+        "request_id": "R1",
+        "reason": "Покупатель отказался от заказа"
+      }
+    },
+    "expected": {
+      "status": "rejected",
+      "reason": "У заказа нет активного резерва"
+    }
+  },
+  {
+    "name": "Пробелы в причине",
+    "input": {
+      "operation": "cancel",
+      "request": {
+        "id": "R1",
+        "customer_id": "C1",
+        "confirmed": true
+      },
+      "stocks": [
+        {
+          "product_id": "T1",
+          "quantity": 10
+        },
+        {
+          "product_id": "K1",
+          "quantity": 6
+        }
+      ],
+      "reservations": [
+        {
+          "id": "R1:T1",
+          "request_id": "R1",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        },
+        {
+          "id": "R1:K1",
+          "request_id": "R1",
+          "product_id": "K1",
+          "quantity": 1,
+          "active": true
+        },
+        {
+          "id": "R0:T1",
+          "request_id": "R0",
+          "product_id": "T1",
+          "quantity": 2,
+          "active": true
+        }
+      ],
+      "cancellation": {
+        "request_id": "R1",
+        "reason": "  отказ  "
+      }
+    },
+    "expected": {
+      "status": "cancelled",
+      "request_id": "R1",
+      "reason": "отказ",
+      "released_reservations": 2
+    }
+  }
+]

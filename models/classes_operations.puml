@@ -1,0 +1,54 @@
+@startuml
+!pragma layout smetana
+skinparam dpi 160
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam linetype ortho
+hide empty members
+class Warehouse {
+  -customers : Map<String, Customer>
+  -products : Map<String, Product>
+  -stocks : Map<String, Stock>
+  -reservations : List<Reservation>
+  -request : Request
+  --
+  +customers() : Map<String, Customer>
+  +products() : Map<String, Product>
+  +stocks() : Map<String, Stock>
+  +reservations() : List<Reservation>
+  +request() : Request
+  +checkAvailability(List<RequestLine>) : List<Map<String, Object>>
+  +hasReservation() : boolean
+  +reserveAll(List<RequestLine>) : Map<String, Object>
+  +cancel(String, String) : Map<String, Object>
+}
+interface Operation {
+  --
+  +apply() : Map<String, Object>
+  +{static} rejected(String) : Map<String, Object>
+}
+abstract class AbstractOperation {
+  -warehouse : Warehouse
+  --
+  #warehouse() : Warehouse
+  +apply() : Map<String, Object>
+  #execute() : Map<String, Object>
+}
+class ReserveOperation {
+  --
+  #execute() : Map<String, Object>
+}
+class CancelOperation {
+  -requestId : String
+  -reason : String
+  --
+  #execute() : Map<String, Object>
+}
+Operation <|.. AbstractOperation
+AbstractOperation <|-- ReserveOperation
+AbstractOperation <|-- CancelOperation
+AbstractOperation "0..*" --> "1" Warehouse
+
+@enduml

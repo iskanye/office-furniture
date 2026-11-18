@@ -1,0 +1,47 @@
+@startuml
+!pragma layout smetana
+skinparam dpi 160
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam linetype ortho
+hide empty members
+class Customer {
+  -id : String
+  -name : String
+  --
+  +id() : String
+  +name() : String
+}
+class Request {
+  -id : String
+  -customerId : String
+  -confirmed : boolean
+  -agreedTotal : String
+  -lines : List<RequestLine>
+  -cancelled : boolean
+  -cancellationReason : String
+  --
+  +id() : String
+  +customerId() : String
+  +confirmed() : boolean
+  +agreedTotal() : String
+  +lines() : List<RequestLine>
+  +cancelled() : boolean
+  +cancellationReason() : String
+  +cancel(String) : void
+  +validate(Map<String, Customer>, Map<String, Product>) : String
+  +mergedLines() : List<RequestLine>
+  +calculateTotal(List<RequestLine>, Map<String, Product>) : BigDecimal
+}
+class RequestLine {
+  -productId : String
+  -quantity : BigDecimal
+  --
+  +productId() : String
+  +quantity() : BigDecimal
+}
+Customer "1" -- "0..*" Request : customerId
+Request "1" *-- "0..*" RequestLine : lines
+@enduml

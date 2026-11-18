@@ -1,0 +1,43 @@
+@startuml
+!pragma layout smetana
+skinparam dpi 160
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam linetype ortho
+hide empty members
+class Product {
+  -id : String
+  -name : String
+  -price : BigDecimal
+  --
+  +id() : String
+  +name() : String
+  +price() : BigDecimal
+}
+class Stock {
+  -productId : String
+  -quantity : BigDecimal
+  --
+  +productId() : String
+  +quantity() : BigDecimal
+}
+class Reservation {
+  -id : String
+  -requestId : String
+  -productId : String
+  -quantity : BigDecimal
+  -active : boolean
+  --
+  +id() : String
+  +requestId() : String
+  +productId() : String
+  +quantity() : BigDecimal
+  +active() : boolean
+  +release() : void
+}
+
+Product "1" -- "0..1" Stock : productId
+Product "1" -- "0..*" Reservation : productId
+@enduml

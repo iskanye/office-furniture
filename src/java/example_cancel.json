@@ -1,0 +1,11 @@
+{
+  "operation": "cancel",
+  "request": {"id": "R1", "customer_id": "C1", "confirmed": true},
+  "stocks": [{"product_id": "T1", "quantity": 10}, {"product_id": "K1", "quantity": 6}],
+  "reservations": [
+    {"id": "R1:T1", "request_id": "R1", "product_id": "T1", "quantity": 2, "active": true},
+    {"id": "R1:K1", "request_id": "R1", "product_id": "K1", "quantity": 1, "active": true},
+    {"id": "R0:T1", "request_id": "R0", "product_id": "T1", "quantity": 2, "active": true}
+  ],
+  "cancellation": {"request_id": "R1", "reason": "Покупатель отказался от заказа"}
+}
