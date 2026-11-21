@@ -33,3 +33,11 @@ out/
 
 # Generated submission snapshot (regenerated after each commit)
 /git_log.txt
+
+# Local report, archive and diagram generation scripts
+/tools/build_kt3_report.py
+/tools/package_kt2.py
+/tools/package_kt3.py
+/models/generate.py
+/models/generate_availability.py
+/models/generate_bpmn.py
