@@ -61,6 +61,31 @@ public final class ReviewTest {
                                                         .apply())
                                         .reason()),
                 "base operation translates cancellation validation error");
+        data = input();
+        data.remove("request");
+        check(
+                "request: ожидается объект".equals(Main.process(data).get("reason")),
+                "missing request explained");
+        data = input();
+        data.put("request", false);
+        check("rejected".equals(Main.process(data).get("status")), "wrong request type rejected");
+        data = input();
+        @SuppressWarnings("unchecked")
+        Map<String, Object> stock =
+                (Map<String, Object>) ((java.util.List<?>) data.get("stocks")).getFirst();
+        stock.remove("quantity");
+        check(
+                "quantity: ожидается неотрицательное целое число"
+                        .equals(Main.process(data).get("reason")),
+                "missing stock quantity explained");
+        stock.put("quantity", "10");
+        check(
+                "rejected".equals(Main.process(data).get("status")),
+                "wrong stock quantity type rejected");
+        data = input();
+        data.put("stocks", null);
+        check("rejected".equals(Main.process(data).get("status")), "null collection rejected");
+        check("rejected".equals(Main.process(null).get("status")), "null input rejected");
         System.out.println("OK: review regression tests");
     }
 }

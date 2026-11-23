@@ -5,6 +5,9 @@ public final class Stock {
     private final BigDecimal quantity;
 
     public Stock(String productId, BigDecimal quantity) {
+        if (quantity == null || quantity.scale() > 0 || quantity.signum() < 0) {
+            throw new IllegalArgumentException("quantity: ожидается неотрицательное целое число");
+        }
         this.productId = productId;
         this.quantity = quantity;
     }
