@@ -1,3 +1,5 @@
+package ru.mirea.furniture;
+
 import java.util.Objects;
 
 public abstract class AbstractOperation implements Operation {

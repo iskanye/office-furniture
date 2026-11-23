@@ -11,8 +11,8 @@ java -version
 javac -version
 mkdir -p out
 javac --release 21 -encoding UTF-8 -Xlint:all -d out *.java
-java -cp out Main example.json
-java -cp out Main example_cancel.json
+java -cp out ru.mirea.furniture.Main example.json
+java -cp out ru.mirea.furniture.Main example_cancel.json
 ```
 
 В PowerShell вместо `mkdir -p out` используйте `New-Item -ItemType Directory -Force out`.
@@ -40,6 +40,10 @@ java -cp out Main example_cancel.json
 
 ## Структура
 
+Java-классы и тесты находятся в именованном пакете `ru.mirea.furniture`.
+Исходники сохранены в плоской папке для сборки командой `javac *.java`;
+ключ `-d out` создаёт структуру пакетов для скомпилированных классов.
+
 - `Request` проверяет заявку, объединяет строки и рассчитывает сумму.
 - `Customer`, `Product`, `RequestLine`, `Stock`, `Reservation` представляют
   остальные сущности логической модели КТ2.
@@ -61,7 +65,9 @@ java -cp out Main example_cancel.json
 ```sh
 python3 verify.py
 javac --release 21 -encoding UTF-8 -cp out -d out tests/StateTest.java
-java -cp out StateTest
+java -cp out ru.mirea.furniture.StateTest
+javac --release 21 -encoding UTF-8 -Xlint:all -cp out -d out tests/ReviewTest.java
+java -cp out ru.mirea.furniture.ReviewTest
 ```
 
 `verify.py` проверяет 31 сценарий по эталонам процедурной версии из

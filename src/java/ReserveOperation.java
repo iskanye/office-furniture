@@ -1,3 +1,5 @@
+package ru.mirea.furniture;
+
 public final class ReserveOperation extends AbstractOperation {
     public ReserveOperation(Warehouse warehouse) {
         super(warehouse);

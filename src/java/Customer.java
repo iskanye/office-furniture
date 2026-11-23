@@ -1,3 +1,5 @@
+package ru.mirea.furniture;
+
 public final class Customer {
     private final String id;
     private final String name;

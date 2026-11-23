@@ -1,3 +1,5 @@
+package ru.mirea.furniture;
+
 import java.math.BigDecimal;
 
 public final class Stock {

@@ -15,7 +15,7 @@ for case in cases:
     with tempfile.TemporaryDirectory() as directory:
         source = Path(directory) / "input.json"
         source.write_text(json.dumps(case["input"], ensure_ascii=False), encoding="utf-8")
-        result = subprocess.run(["java", "-cp", str(HERE / "out"), "Main", str(source)],
+        result = subprocess.run(["java", "-cp", str(HERE / "out"), "ru.mirea.furniture.Main", str(source)],
                                 capture_output=True, text=True, check=True)
         assert json.loads(result.stdout) == case["expected"], (case["name"], result.stdout)
 print(f"OK: {len(cases)} scenarios; Python comparison: {module is not None}")

@@ -1,3 +1,5 @@
+package ru.mirea.furniture;
+
 public final class CancelOperation extends AbstractOperation {
     private final String requestId;
     private final String reason;

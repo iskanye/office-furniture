@@ -1,3 +1,5 @@
+package ru.mirea.furniture;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
@@ -147,7 +149,7 @@ public final class Main {
 
     public static void main(String[] args) {
         if (args.length != 1) {
-            System.err.println("Использование: java -cp out Main example.json");
+            System.err.println("Использование: java -cp out ru.mirea.furniture.Main example.json");
             System.exit(2);
         }
         Map<String, Object> result;

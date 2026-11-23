@@ -1,3 +1,5 @@
+package ru.mirea.furniture;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
