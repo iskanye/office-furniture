@@ -79,6 +79,10 @@ public final class Main {
     }
 
     public static Map<String, Object> process(Map<String, Object> data) {
+        Object action = data.getOrDefault("operation", "reserve");
+        if (!"reserve".equals(action) && !"cancel".equals(action)) {
+            return Operation.rejected("Неизвестная операция: " + action);
+        }
         Warehouse warehouse = load(data);
         Operation operation;
         if ("cancel".equals(data.get("operation"))) {
