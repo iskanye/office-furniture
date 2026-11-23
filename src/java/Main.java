@@ -81,7 +81,8 @@ public final class Main {
     public static Map<String, Object> process(Map<String, Object> data) {
         Object action = data.getOrDefault("operation", "reserve");
         if (!"reserve".equals(action) && !"cancel".equals(action)) {
-            return Operation.rejected("Неизвестная операция: " + action);
+            return ResultJson.toJson(
+                    new OperationResult.Rejected("Неизвестная операция: " + action));
         }
         Warehouse warehouse = load(data);
         Operation operation;
@@ -95,7 +96,7 @@ public final class Main {
         } else {
             operation = new ReserveOperation(warehouse);
         }
-        return operation.apply();
+        return ResultJson.toJson(operation.apply());
     }
 
     public static void main(String[] args) throws Exception {

@@ -1,4 +1,3 @@
-import java.util.Map;
 import java.util.Objects;
 
 public abstract class AbstractOperation implements Operation {
@@ -13,13 +12,13 @@ public abstract class AbstractOperation implements Operation {
     }
 
     @Override
-    public final Map<String, Object> apply() {
+    public final OperationResult apply() {
         try {
             return execute();
         } catch (IllegalArgumentException error) {
-            return Operation.rejected(error.getMessage());
+            return new OperationResult.Rejected(error.getMessage());
         }
     }
 
-    protected abstract Map<String, Object> execute();
+    protected abstract OperationResult execute();
 }

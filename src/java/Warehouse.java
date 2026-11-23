@@ -1,6 +1,5 @@
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -45,8 +44,8 @@ public final class Warehouse {
         return request;
     }
 
-    public List<Map<String, Object>> checkAvailability(List<RequestLine> lines) {
-        List<Map<String, Object>> shortages = new ArrayList<>();
+    public List<Shortage> checkAvailability(List<RequestLine> lines) {
+        List<Shortage> shortages = new ArrayList<>();
         for (RequestLine line : lines) {
             BigDecimal reserved = BigDecimal.ZERO;
             for (Reservation reservation : reservations) {
@@ -58,10 +57,7 @@ public final class Warehouse {
             BigDecimal available =
                     (stock == null ? BigDecimal.ZERO : stock.quantity()).subtract(reserved);
             if (line.quantity().compareTo(available) > 0) {
-                Map<String, Object> shortage = new LinkedHashMap<>();
-                shortage.put("product_id", line.productId());
-                shortage.put("missing", line.quantity().subtract(available));
-                shortages.add(shortage);
+                shortages.add(new Shortage(line.productId(), line.quantity().subtract(available)));
             }
         }
         return shortages;
@@ -72,35 +68,28 @@ public final class Warehouse {
                 .anyMatch(r -> r.active() && Objects.equals(r.requestId(), request.id()));
     }
 
-    public Map<String, Object> reserveAll() {
+    public OperationResult reserveAll() {
         String error = request.validate(customers, products);
         if (error != null) {
             throw new IllegalArgumentException(error);
         }
         List<RequestLine> lines = request.mergedLines();
-        List<Map<String, Object>> shortages = checkAvailability(lines);
+        List<Shortage> shortages = checkAvailability(lines);
         if (!shortages.isEmpty()) {
-            Map<String, Object> result = Operation.rejected("Недостаточно товара");
-            result.put("shortages", shortages);
-            return result;
+            return new OperationResult.Rejected("Недостаточно товара", shortages, null);
         }
         String total = request.calculateTotal(lines, products).toPlainString();
         if (!request.confirmed()) {
-            Map<String, Object> result = new LinkedHashMap<>();
-            result.put("status", "awaiting_confirmation");
-            result.put("total", total);
-            return result;
+            return new OperationResult.AwaitingConfirmation(total);
         }
         if (!Objects.equals(request.agreedTotal(), total)) {
-            Map<String, Object> result = Operation.rejected("Согласованная цена изменилась");
-            result.put("total", total);
-            return result;
+            return new OperationResult.Rejected("Согласованная цена изменилась", List.of(), total);
         }
         if (request.cancelled()) {
-            return Operation.rejected("Заказ отменён");
+            return new OperationResult.Rejected("Заказ отменён");
         }
         if (hasReservation()) {
-            return Operation.rejected("Заявка уже зарезервирована");
+            return new OperationResult.Rejected("Заявка уже зарезервирована");
         }
         for (RequestLine line : lines) {
             reservations.add(
@@ -111,14 +100,10 @@ public final class Warehouse {
                             line.quantity(),
                             true));
         }
-        Map<String, Object> result = new LinkedHashMap<>();
-        result.put("status", "reserved");
-        result.put("request_id", request.id());
-        result.put("total", total);
-        return result;
+        return new OperationResult.Reserved(request.id(), total);
     }
 
-    public Map<String, Object> cancel(String requestId, String reason) {
+    public OperationResult cancel(String requestId, String reason) {
         if (!Objects.equals(requestId, request.id())) {
             throw new IllegalArgumentException("Неверный номер заявки");
         }
@@ -126,10 +111,10 @@ public final class Warehouse {
             throw new IllegalArgumentException("Укажите причину отмены");
         }
         if (request.cancelled()) {
-            return Operation.rejected("Заказ уже отменён");
+            return new OperationResult.Rejected("Заказ уже отменён");
         }
         if (!hasReservation()) {
-            return Operation.rejected("У заказа нет активного резерва");
+            return new OperationResult.Rejected("У заказа нет активного резерва");
         }
         int released = 0;
         for (Reservation r : reservations) {
@@ -139,11 +124,6 @@ public final class Warehouse {
             }
         }
         request.cancel(reason.strip());
-        Map<String, Object> result = new LinkedHashMap<>();
-        result.put("status", "cancelled");
-        result.put("request_id", request.id());
-        result.put("reason", request.cancellationReason());
-        result.put("released_reservations", released);
-        return result;
+        return new OperationResult.Cancelled(request.id(), request.cancellationReason(), released);
     }
 }

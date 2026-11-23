@@ -34,7 +34,7 @@ public final class ReviewTest {
         request.put("confirmed", false);
         Warehouse warehouse = Main.load(data);
         check(
-                "awaiting_confirmation".equals(warehouse.reserveAll().get("status")),
+                warehouse.reserveAll() instanceof OperationResult.AwaitingConfirmation,
                 "warehouse checks confirmation");
         check(
                 warehouse.reservations().size() == 1,
@@ -45,14 +45,21 @@ public final class ReviewTest {
         invalidRequest.put("customer_id", "unknown");
         check(
                 "Неизвестный покупатель"
-                        .equals(new ReserveOperation(Main.load(data)).apply().get("reason")),
+                        .equals(
+                                ((OperationResult.Rejected)
+                                                new ReserveOperation(Main.load(data)).apply())
+                                        .reason()),
                 "base operation translates reservation validation error");
         check(
                 "Неверный номер заявки"
                         .equals(
-                                new CancelOperation(Main.load(input()), "unknown", "Отказ")
-                                        .apply()
-                                        .get("reason")),
+                                ((OperationResult.Rejected)
+                                                new CancelOperation(
+                                                                Main.load(input()),
+                                                                "unknown",
+                                                                "Отказ")
+                                                        .apply())
+                                        .reason()),
                 "base operation translates cancellation validation error");
         System.out.println("OK: review regression tests");
     }

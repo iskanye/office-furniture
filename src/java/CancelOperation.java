@@ -1,5 +1,3 @@
-import java.util.Map;
-
 public final class CancelOperation extends AbstractOperation {
     private final String requestId;
     private final String reason;
@@ -11,7 +9,7 @@ public final class CancelOperation extends AbstractOperation {
     }
 
     @Override
-    protected Map<String, Object> execute() {
+    protected OperationResult execute() {
         return warehouse().cancel(requestId, reason);
     }
 }
