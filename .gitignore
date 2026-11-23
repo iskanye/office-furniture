@@ -39,3 +39,6 @@ out/
 /models/generate.py
 /models/generate_availability.py
 /models/generate_bpmn.py
+
+# Separate reports for checkpoint submissions
+/Отчет_*_КТ*.docx
