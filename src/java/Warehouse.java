@@ -72,13 +72,12 @@ public final class Warehouse {
                 .anyMatch(r -> r.active() && Objects.equals(r.requestId(), request.id()));
     }
 
-    public Map<String, Object> reserveAll(List<RequestLine> lines) {
-        if (request.cancelled()) {
-            return Operation.rejected("Заказ отменён");
+    public Map<String, Object> reserveAll() {
+        String error = request.validate(customers, products);
+        if (error != null) {
+            return Operation.rejected(error);
         }
-        if (hasReservation()) {
-            return Operation.rejected("Заявка уже зарезервирована");
-        }
+        List<RequestLine> lines = request.mergedLines();
         List<Map<String, Object>> shortages = checkAvailability(lines);
         if (!shortages.isEmpty()) {
             Map<String, Object> result = Operation.rejected("Недостаточно товара");
@@ -86,6 +85,23 @@ public final class Warehouse {
             return result;
         }
         String total = request.calculateTotal(lines, products).toPlainString();
+        if (!request.confirmed()) {
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("status", "awaiting_confirmation");
+            result.put("total", total);
+            return result;
+        }
+        if (!Objects.equals(request.agreedTotal(), total)) {
+            Map<String, Object> result = Operation.rejected("Согласованная цена изменилась");
+            result.put("total", total);
+            return result;
+        }
+        if (request.cancelled()) {
+            return Operation.rejected("Заказ отменён");
+        }
+        if (hasReservation()) {
+            return Operation.rejected("Заявка уже зарезервирована");
+        }
         for (RequestLine line : lines) {
             reservations.add(
                     new Reservation(

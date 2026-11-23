@@ -25,7 +25,20 @@ public final class ReviewTest {
         data.put("operation", null);
         check("rejected".equals(Main.process(data).get("status")), "null operation rejected");
         data.remove("operation");
-        check("reserved".equals(Main.process(data).get("status")), "omitted action defaults to reserve");
+        check(
+                "reserved".equals(Main.process(data).get("status")),
+                "omitted action defaults to reserve");
+        data = input();
+        @SuppressWarnings("unchecked")
+        Map<String, Object> request = (Map<String, Object>) data.get("request");
+        request.put("confirmed", false);
+        Warehouse warehouse = Main.load(data);
+        check(
+                "awaiting_confirmation".equals(warehouse.reserveAll().get("status")),
+                "warehouse checks confirmation");
+        check(
+                warehouse.reservations().size() == 1,
+                "unconfirmed request leaves reservations unchanged");
         System.out.println("OK: review regression tests");
     }
 }
