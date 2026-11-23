@@ -75,7 +75,7 @@ public final class Warehouse {
     public Map<String, Object> reserveAll() {
         String error = request.validate(customers, products);
         if (error != null) {
-            return Operation.rejected(error);
+            throw new IllegalArgumentException(error);
         }
         List<RequestLine> lines = request.mergedLines();
         List<Map<String, Object>> shortages = checkAvailability(lines);
@@ -120,10 +120,10 @@ public final class Warehouse {
 
     public Map<String, Object> cancel(String requestId, String reason) {
         if (!Objects.equals(requestId, request.id())) {
-            return Operation.rejected("Неверный номер заявки");
+            throw new IllegalArgumentException("Неверный номер заявки");
         }
         if (reason == null || reason.strip().isEmpty()) {
-            return Operation.rejected("Укажите причину отмены");
+            throw new IllegalArgumentException("Укажите причину отмены");
         }
         if (request.cancelled()) {
             return Operation.rejected("Заказ уже отменён");

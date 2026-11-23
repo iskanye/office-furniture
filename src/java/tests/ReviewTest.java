@@ -39,6 +39,21 @@ public final class ReviewTest {
         check(
                 warehouse.reservations().size() == 1,
                 "unconfirmed request leaves reservations unchanged");
+        data = input();
+        @SuppressWarnings("unchecked")
+        Map<String, Object> invalidRequest = (Map<String, Object>) data.get("request");
+        invalidRequest.put("customer_id", "unknown");
+        check(
+                "Неизвестный покупатель"
+                        .equals(new ReserveOperation(Main.load(data)).apply().get("reason")),
+                "base operation translates reservation validation error");
+        check(
+                "Неверный номер заявки"
+                        .equals(
+                                new CancelOperation(Main.load(input()), "unknown", "Отказ")
+                                        .apply()
+                                        .get("reason")),
+                "base operation translates cancellation validation error");
         System.out.println("OK: review regression tests");
     }
 }

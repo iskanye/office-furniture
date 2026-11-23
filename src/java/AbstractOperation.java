@@ -14,7 +14,11 @@ public abstract class AbstractOperation implements Operation {
 
     @Override
     public final Map<String, Object> apply() {
-        return execute();
+        try {
+            return execute();
+        } catch (IllegalArgumentException error) {
+            return Operation.rejected(error.getMessage());
+        }
     }
 
     protected abstract Map<String, Object> execute();
