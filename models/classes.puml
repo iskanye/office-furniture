@@ -7,6 +7,7 @@ skinparam defaultFontName Arial
 skinparam defaultFontSize 14
 skinparam linetype ortho
 hide empty members
+title Пакет ru.mirea.furniture
 class Customer {
   -id : String
   -name : String
@@ -84,32 +85,31 @@ class Warehouse {
   +stocks() : Map<String, Stock>
   +reservations() : List<Reservation>
   +request() : Request
-  +checkAvailability(List<RequestLine>) : List<Map<String, Object>>
+  +checkAvailability(List<RequestLine>) : List<Shortage>
   +hasReservation() : boolean
-  +reserveAll(List<RequestLine>) : Map<String, Object>
-  +cancel(String, String) : Map<String, Object>
+  +reserveAll() : OperationResult
+  +cancel(String, String) : OperationResult
 }
 interface Operation {
   --
-  +apply() : Map<String, Object>
-  +{static} rejected(String) : Map<String, Object>
+  +apply() : OperationResult
 }
 abstract class AbstractOperation {
   -warehouse : Warehouse
   --
   #warehouse() : Warehouse
-  +apply() : Map<String, Object>
-  #execute() : Map<String, Object>
+  +apply() : OperationResult
+  #execute() : OperationResult
 }
 class ReserveOperation {
   --
-  #execute() : Map<String, Object>
+  #execute() : OperationResult
 }
 class CancelOperation {
   -requestId : String
   -reason : String
   --
-  #execute() : Map<String, Object>
+  #execute() : OperationResult
 }
 class Main {
   --
@@ -143,5 +143,40 @@ AbstractOperation "0..*" --> "1" Warehouse
 Main ..> Operation : apply
 Main ..> Json : parse / stringify
 Main ..> Warehouse : load
+
+interface OperationResult <<sealed>>
+class "OperationResult.Rejected" as Rejected <<record>> {
+  -reason : String
+  -shortages : List<Shortage>
+  -total : String
+}
+class "OperationResult.AwaitingConfirmation" as AwaitingConfirmation <<record>> {
+  -total : String
+}
+class "OperationResult.Reserved" as Reserved <<record>> {
+  -requestId : String
+  -total : String
+}
+class "OperationResult.Cancelled" as Cancelled <<record>> {
+  -requestId : String
+  -reason : String
+  -releasedReservations : int
+}
+class Shortage <<record>> {
+  -productId : String
+  -missing : BigDecimal
+}
+class ResultJson {
+  +{static} toJson(OperationResult) : Map<String, Object>
+}
+OperationResult <|.. Rejected
+OperationResult <|.. AwaitingConfirmation
+OperationResult <|.. Reserved
+OperationResult <|.. Cancelled
+Rejected "1" *-- "0..*" Shortage
+Operation ..> OperationResult : result
+Warehouse ..> OperationResult
+Main ..> ResultJson : serialize
+ResultJson ..> OperationResult
 
 @enduml
