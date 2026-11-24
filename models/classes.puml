@@ -149,22 +149,38 @@ class "OperationResult.Rejected" as Rejected <<record>> {
   -reason : String
   -shortages : List<Shortage>
   -total : String
+  --
+  +reason() : String
+  +shortages() : List<Shortage>
+  +total() : String
 }
 class "OperationResult.AwaitingConfirmation" as AwaitingConfirmation <<record>> {
   -total : String
+  --
+  +total() : String
 }
 class "OperationResult.Reserved" as Reserved <<record>> {
   -requestId : String
   -total : String
+  --
+  +requestId() : String
+  +total() : String
 }
 class "OperationResult.Cancelled" as Cancelled <<record>> {
   -requestId : String
   -reason : String
   -releasedReservations : int
+  --
+  +requestId() : String
+  +reason() : String
+  +releasedReservations() : int
 }
 class Shortage <<record>> {
   -productId : String
   -missing : BigDecimal
+  --
+  +productId() : String
+  +missing() : BigDecimal
 }
 class ResultJson {
   +{static} toJson(OperationResult) : Map<String, Object>

@@ -7,6 +7,7 @@ skinparam defaultFontName Arial
 skinparam defaultFontSize 14
 skinparam linetype ortho
 hide empty members
+title Пакет ru.mirea.furniture
 class Warehouse {
   -customers : Map<String, Customer>
   -products : Map<String, Product>
@@ -19,36 +20,40 @@ class Warehouse {
   +stocks() : Map<String, Stock>
   +reservations() : List<Reservation>
   +request() : Request
-  +checkAvailability(List<RequestLine>) : List<Map<String, Object>>
+  +checkAvailability(List<RequestLine>) : List<Shortage>
   +hasReservation() : boolean
-  +reserveAll(List<RequestLine>) : Map<String, Object>
-  +cancel(String, String) : Map<String, Object>
+  +reserveAll() : OperationResult
+  +cancel(String, String) : OperationResult
 }
 interface Operation {
   --
-  +apply() : Map<String, Object>
-  +{static} rejected(String) : Map<String, Object>
+  +apply() : OperationResult
 }
 abstract class AbstractOperation {
   -warehouse : Warehouse
   --
   #warehouse() : Warehouse
-  +apply() : Map<String, Object>
-  #execute() : Map<String, Object>
+  +apply() : OperationResult
+  #execute() : OperationResult
 }
 class ReserveOperation {
   --
-  #execute() : Map<String, Object>
+  #execute() : OperationResult
 }
 class CancelOperation {
   -requestId : String
   -reason : String
   --
-  #execute() : Map<String, Object>
+  #execute() : OperationResult
 }
 Operation <|.. AbstractOperation
 AbstractOperation <|-- ReserveOperation
 AbstractOperation <|-- CancelOperation
 AbstractOperation "0..*" --> "1" Warehouse
+
+note bottom of AbstractOperation
+  apply(): общий перевод ошибки проверки
+  IllegalArgumentException в Rejected
+end note
 
 @enduml
